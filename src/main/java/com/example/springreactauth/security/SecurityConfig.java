@@ -21,12 +21,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors() // enable CORS for React
+            .cors() // enable CORS
             .and()
             .csrf(AbstractHttpConfigurer::disable) // disable CSRF for APIs
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/orders/**").permitAll() // allow these endpoints
-                .anyRequest().authenticated() // all other endpoints require login
+                .requestMatchers("/api/auth/**", "/api/orders/**").permitAll()
+                .anyRequest().authenticated()
             );
 
         return http.build();
@@ -36,8 +36,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow your React app origin
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+        // Allow GitHub Pages frontend
+        configuration.setAllowedOriginPatterns(
+                List.of("https://keerthana-javvaji.github.io")
+        );
 
         // Allow common HTTP methods
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
