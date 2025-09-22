@@ -21,12 +21,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors() // enable CORS
+            .cors() // Enable CORS
             .and()
-            .csrf(AbstractHttpConfigurer::disable) // disable CSRF for APIs
+            .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
             .authorizeHttpRequests(auth -> auth
+                // Allow public access to auth and orders APIs
                 .requestMatchers("/api/auth/**", "/api/orders/**").permitAll()
-                .anyRequest().authenticated()
+                // Allow all other endpoints (including root) to prevent 403
+                .anyRequest().permitAll()
             );
 
         return http.build();
@@ -36,9 +38,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow GitHub Pages frontend
+        // Allow GitHub Pages frontend and optional local testing
         configuration.setAllowedOriginPatterns(
-                List.of("https://keerthana-javvaji.github.io")
+                List.of(
+                        "https://keerthana-javvaji.github.io",
+                        "http://localhost:5173"
+                )
         );
 
         // Allow common HTTP methods
